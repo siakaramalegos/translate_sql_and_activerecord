@@ -92,3 +92,40 @@ The posts with titles that start with the word "The"
 
 Posts with IDs of 3,5,7, and 9
 `SELECT * FROM posts WHERE id IN (3,5,7,9);`
+
+## Custom Queries
+
+Get the user with the most itineraries (can substitute for post)
+```
+SELECT u.username
+FROM users u
+  JOIN itineraries i ON i.user_id = u.id
+GROUP BY u.id
+ORDER BY COUNT(i.id) DESC
+LIMIT 1;
+
+User.joins('JOIN itineraries i ON i.user_id = users.id').group('users.id').order('COUNT(i.id) DESC').limit(1)
+```
+
+Get the count of itineraries (substituted for posts) of the user with the most itineraries
+```
+SELECT COUNT(i.id)
+FROM users u
+  JOIN itineraries i ON i.user_id = u.id
+GROUP BY u.id
+ORDER BY COUNT(i.id) DESC
+LIMIT 1;
+
+u = User.joins('JOIN itineraries i ON i.user_id = users.id').group('users.id').order('COUNT(i.id) DESC').limit(1).first
+
+Itinerary.where(user_id: u.id).count
+
+```
+
+Get the count of unique first names
+```
+SELECT COUNT(DISTINCT first_name) FROM users;
+
+User.select(:first_name).distinct.count
+```
+
