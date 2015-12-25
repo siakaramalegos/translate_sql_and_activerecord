@@ -20,7 +20,7 @@ FROM
 ORDER BY
   created_at DESC
 LIMIT 1;
-`Post.first`
+`Post.last`
 
 SELECT *
 FROM
@@ -54,3 +54,41 @@ HAVING
 
 * all posts sorted in descending order by date created
 `Post.order(created_at: :desc)`
+
+## Translate from Active Record to SQL
+
+Post.all
+`SELECT * FROM posts;`
+
+Post.first
+`SELECT * FROM posts ORDER BY created_at LIMIT 1;`
+
+Post.last
+`SELECT * FROM posts ORDER BY created_at DESC LIMIT 1;`
+
+Post.where(:id => 4)
+`SELECT * FROM posts WHERE id = 4;`
+
+Post.find(4)
+`SELECT * FROM posts WHERE id = 4;`
+
+User.count
+`SELECT COUNT(*) FROM users;`
+
+Post.select(:name).where(:created_at > 3.days.ago).order(:created_at)
+`SELECT name FROM posts WHERE created_at > ( CURDATE() - INTERVAL 3 DAY ) ORDER BY created_at;`
+
+Post.select("COUNT(*)").group(:category_id)
+`SELECT COUNT(*) FROM posts GROUP BY category_id;`
+
+All posts created before 2014
+`SELECT * FROM posts WHERE created_at < '2014';`
+
+A list of all (unique) first names for authors who have written at least 3 posts
+`SELECT DISTINCT u.first_name FROM users u JOIN posts p ON p.author_id = u.id GROUP BY u.id HAVING COUNT(p.id) >= 3;`
+
+The posts with titles that start with the word "The"
+`SELECT * FROM posts WHERE title = 'The%';`
+
+Posts with IDs of 3,5,7, and 9
+`SELECT * FROM posts WHERE id IN (3,5,7,9);`
